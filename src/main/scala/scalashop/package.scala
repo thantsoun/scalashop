@@ -1,11 +1,17 @@
 
-import common._
-
 package object scalashop {
 
   /** The value of every pixel is represented as a 32 bit integer. */
   type RGBA = Int
 
+  type RGBTuple = (Int, Int, Int, Int)
+  
+  implicit class TupleAdd(t: RGBTuple) {
+    def +(p: RGBTuple): (RGBA, RGBA, RGBA, RGBA) = (p._1 + t._1, p._2 + t._2, p._3 + t._3, p._4 + t._4)
+  }
+
+  val addTuple: (RGBTuple, RGBTuple) => RGBTuple = (a, b) => a + b
+  
   /** Returns the red component. */
   def red(c: RGBA): Int = (0xff000000 & c) >>> 24
 
@@ -39,8 +45,18 @@ package object scalashop {
 
   /** Computes the blurred RGBA value of a single pixel of the input image. */
   def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA = {
-    // TODO implement using while loops
-    ???
+    
+    val regionalValues: List[RGBTuple] = (for {
+      i <- x - radius to x + radius
+      if i >= 0 && i < src.width
+      j <- y - radius to y + radius
+      if j >= 0 && j < src.height
+    } yield (red(src(i, j)), green(src(i, j)), blue(src(i, j)), alpha(src(i, j)))).toList
+
+    val accValues = regionalValues.foldLeft((0, 0, 0, 0))(addTuple)
+    val pixels = regionalValues.size;
+    
+    rgba(accValues._1 / pixels, accValues._2 / pixels, accValues._3 / pixels, accValues._4 / pixels)
   }
 
 }
