@@ -46,7 +46,7 @@ object VerticalBoxBlur {
     (for {
       x <- from until end
       y <- 0 until src.height
-    } yield (x, y)).toList.foreach(p => dst.update(p._1, p._2, boxBlurKernel(src, p._1, p._2, radius))) 
+    } yield (x, y)).foreach(p => dst.update(p._1, p._2, boxBlurKernel(src, p._1, p._2, radius))) 
   }
 
   /** Blurs the columns of the source image in parallel using `numTasks` tasks.

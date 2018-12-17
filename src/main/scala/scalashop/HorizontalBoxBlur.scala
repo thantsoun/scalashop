@@ -45,7 +45,7 @@ object HorizontalBoxBlur {
     (for {
       y <- from until end
       x <- 0 until src.width
-    } yield (x, y)).toList.foreach(p => dst.update(p._1, p._2, boxBlurKernel(src, p._1, p._2, radius)))
+    } yield (x, y)).foreach(p => dst.update(p._1, p._2, boxBlurKernel(src, p._1, p._2, radius)))
   }
 
   /** Blurs the rows of the source image in parallel using `numTasks` tasks.
